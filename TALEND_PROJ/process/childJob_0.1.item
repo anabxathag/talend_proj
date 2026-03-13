@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model:JobletProcess xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:model="http://www.talend.com/joblet.ecore">
+  <parameters/>
+  <node componentName="tLoop" posX="256" posY="192">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tLoop_1"/>
+    <elementParameter name="FORLOOP" value="true"/>
+    <elementParameter name="FROM" value="1"/>
+    <elementParameter name="TO" value="3"/>
+    <elementParameter name="STEP" value="1"/>
+    <elementParameter name="INCREASE" value="true"/>
+  </node>
+  <node componentName="tRunJob" posX="448" posY="192">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tRunJob_1"/>
+    <elementParameter name="PROCESS" value="HelloWorld"/>
+    <elementParameter name="PROCESS:PROCESS_TYPE_CONTEXT" value="Default"/>
+    <elementParameter name="PROCESS:PROCESS_TYPE_PROCESS" value="_SKWgMMqDEeeZVPkXOYGoLg"/>
+  </node>
+  <connection connectorName="ITERATE" label="Iterate" lineStyle="7" mergeOrder="0" metaname="tLoop_1" outputId="0" source="tLoop_1" target="tRunJob_1"/>
+</model:JobletProcess>

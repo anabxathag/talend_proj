@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model:JobletProcess xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:model="http://www.talend.com/joblet.ecore">
+  <parameters/>
+  <node componentName="tFileInputDelimited" posX="256" posY="192">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tFileInputDelimited_1"/>
+    <elementParameter name="FILENAME" value="&quot;/Applications/TalendStudio-8.0.1/studio/workspace/data/emails.txt&quot;"/>
+    <elementParameter name="LABEL" value="Email addresses"/>
+    <metadata connector="FLOW" name="tFileInputDelimited_1">
+      <column key="false" length="-1" name="email" nullable="false" precision="-1" type="id_String"/>
+    </metadata>
+  </node>
+  <node componentName="tUniqRow" posX="416" posY="192">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tUniqRow_1"/>
+    <elementParameter name="UNIQUE_KEY">
+      <elementValue elementRef="SCHEMA_COLUMN" value="email"/>
+      <elementValue elementRef="KEY_ATTRIBUTE" value="true"/>
+    </elementParameter>
+    <elementParameter name="LABEL" value="deduplicate"/>
+    <metadata connector="UNIQUE" name="UNIQUE">
+      <column key="false" length="-1" name="email" nullable="false" precision="-1" type="id_String"/>
+    </metadata>
+    <metadata connector="DUPLICATE" name="DUPLICATE">
+      <column key="false" length="-1" name="email" nullable="false" precision="-1" type="id_String"/>
+    </metadata>
+  </node>
+  <node componentName="tJavaRow" posX="640" posY="96">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tJavaRow_1"/>
+    <elementParameter name="CODE" value="String email = input_row.email;&#xA;&#xA;Perl5Matcher matcher = new Perl5Matcher();&#xA;Perl5Compiler compiler = new Perl5Compiler();&#xA;Pattern pattern = compiler.compile(&quot;^[\\w_.-]+@[\\w_.-]+\\.[\\w]+$&quot;);&#xA;&#xA;if (!matcher.matches(email, pattern)) {&#xA;&#x9;System.out.println(&quot;invalid : &quot; + email);&#xA;&#x9;}&#xA;&#x9;else&#xA;&#x9;System.out.println(&quot;valid   : &quot; + email);"/>
+    <elementParameter name="LABEL" value="validate"/>
+  </node>
+  <node componentName="tJavaRow" posX="640" posY="288">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tJavaRow_2"/>
+    <elementParameter name="CODE" value="System.out.println(&quot;duplicate: &quot; + input_row.email);"/>
+    <elementParameter name="LABEL" value="duplicates"/>
+  </node>
+  <node componentName="tLibraryLoad" posX="256" posY="64">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tLibraryLoad_1"/>
+    <elementParameter name="LIBRARY" value="&quot;jakarta-oro-2.0.8.jar&quot;"/>
+    <elementParameter name="IMPORT" value="import org.apache.oro.text.regex.Perl5Matcher;&#xA;import org.apache.oro.text.regex.Perl5Compiler;&#xA;import org.apache.oro.text.regex.Pattern;"/>
+  </node>
+  <connection connectorName="SUBJOB_OK" label="OnSubjobOk" lineStyle="1" mergeOrder="0" metaname="tLibraryLoad_1" outputId="0" source="tLibraryLoad_1" target="tFileInputDelimited_1">
+    <elementParameter/>
+  </connection>
+  <connection connectorName="FLOW" label="row1" lineStyle="0" mergeOrder="0" outputId="0" source="tFileInputDelimited_1" target="tUniqRow_1"/>
+  <connection connectorName="UNIQUE" label="row2" lineStyle="0" mergeOrder="0" outputId="0" source="tUniqRow_1" target="tJavaRow_1"/>
+  <connection connectorName="DUPLICATE" label="row3" lineStyle="0" mergeOrder="0" outputId="0" source="tUniqRow_1" target="tJavaRow_2"/>
+</model:JobletProcess>

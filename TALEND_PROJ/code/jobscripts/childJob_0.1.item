@@ -1,0 +1,38 @@
+// Defining a Job execution trigger
+addComponent {
+	setComponentDefinition {
+		TYPE: "tLoop",
+		NAME: "tLoop_1",
+		POSITION: 256, 192
+	}
+	setSettings {
+		FORLOOP : "true",
+		FROM : "1",
+		TO : "3",
+		STEP : "1",
+		INCREASE : "true"
+	}
+}
+
+// Defining the child Job to be called and the connection between the components
+addComponent {
+	setComponentDefinition {
+		TYPE: "tRunJob",
+		NAME: "tRunJob_1",
+		POSITION: 448, 192
+	}
+	setSettings {
+		PROCESS : "HelloWorld",
+		PROCESS:PROCESS_TYPE_CONTEXT : "Default",
+		PROCESS:PROCESS_TYPE_PROCESS : "_SKWgMMqDEeeZVPkXOYGoLg"
+	}
+}
+
+addConnection {
+	TYPE: "ITERATE",
+	NAME: "Iterate",
+	LINESTYLE: 7,
+	METANAME: "tLoop_1",
+	SOURCE: "tLoop_1",
+	TARGET: "tRunJob_1"
+}

@@ -1,0 +1,305 @@
+// Defining the input components to read the scores
+
+addComponent {
+	setComponentDefinition {
+		TYPE: "tFileInputDelimited",
+		NAME: "tFileInputDelimited_1",
+		POSITION: 224, 96
+	}
+	setSettings {
+		FILENAME : "\"/Applications/TalendStudio-8.0.1/studio/workspace/data/scores_month1.csv\"",
+		HEADER : "1",
+		LABEL : "scores_month1"
+	}
+	addSchema {
+		NAME: "tFileInputDelimited_1",
+		CONNECTOR: "FLOW"
+		addColumn {
+			NAME: "subject",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "score",
+			TYPE: "id_Double",
+			PRECISION: 2
+		}
+	}
+}
+
+addComponent {
+	setComponentDefinition {
+		TYPE: "tFileInputDelimited",
+		NAME: "tFileInputDelimited_2",
+		POSITION: 224, 192
+	}
+	setSettings {
+		FILENAME : "\"/Applications/TalendStudio-8.0.1/studio/workspace/data/scores_month2.csv\"",
+		HEADER : "1",
+		LABEL : "scores_month2"
+	}
+	addSchema {
+		NAME: "tFileInputDelimited_2",
+		CONNECTOR: "FLOW"
+		addColumn {
+			NAME: "subject",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "score",
+			TYPE: "id_Double",
+			PRECISION: 2
+		}
+	}
+}
+
+addComponent {
+	setComponentDefinition {
+		TYPE: "tFileInputDelimited",
+		NAME: "tFileInputDelimited_3",
+		POSITION: 224, 228
+	}
+	setSettings {
+		FILENAME : "\"/Applications/TalendStudio-8.0.1/studio/workspace/data/scores_month3.csv\"",
+		HEADER : "1",
+		LABEL : "scores_month3"
+	}
+	addSchema {
+		NAME: "tFileInputDelimited_3",
+		CONNECTOR: "FLOW"
+		addColumn {
+			NAME: "subject",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "score",
+			TYPE: "id_Double",
+			PRECISION: 2
+		}
+	}
+}
+
+
+// Merging the input flows
+
+addComponent {
+	setComponentDefinition {
+		TYPE: "tUnite",
+		NAME: "tUnite_1",
+		POSITION: 384, 192
+	}
+	setSettings {
+		LABEL : "merge"		
+	}
+	addSchema {
+		NAME: "tUnite_1",
+		CONNECTOR: "FLOW"
+		addColumn {
+			NAME: "subject",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "score",
+			TYPE: "id_Double",
+			PRECISION: 2
+		}
+	}
+}
+
+// Aggregating the scores
+
+addComponent {
+	setComponentDefinition {
+		TYPE: "tAggregateRow",
+		NAME: "tAggregateRow_1",
+		POSITION: 512, 192
+	}
+	setSettings {
+		GROUPBYS {
+			OUTPUT_COLUMN : "subject",
+			INPUT_COLUMN : "subject"
+		},
+		OPERATIONS {
+			OUTPUT_COLUMN : "sum",
+			FUNCTION : "sum",
+			INPUT_COLUMN : "score",
+			OUTPUT_COLUMN : "average",
+			FUNCTION : "avg",
+			INPUT_COLUMN : "score",
+			OUTPUT_COLUMN : "max",
+			FUNCTION : "max",
+			INPUT_COLUMN : "score",
+			OUTPUT_COLUMN : "min",
+			FUNCTION : "min",
+			INPUT_COLUMN : "score"
+		},
+		LABEL : "aggregate"
+	}
+	addSchema {
+		NAME: "tAggregateRow_1",
+		CONNECTOR: "FLOW"
+		addColumn {
+			NAME: "subject",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "sum",
+			TYPE: "id_Double",
+			PRECISION: 2
+		}
+		addColumn {
+			NAME: "average",
+			TYPE: "id_Double",
+			PRECISION: 2
+		}
+		addColumn {
+			NAME: "max",
+			TYPE: "id_Double",
+			PRECISION: 2
+		}
+		addColumn {
+			NAME: "min",
+			TYPE: "id_Double",
+			PRECISION: 2
+		}
+	}
+}
+
+// Sorting the aggregated scores
+
+addComponent {
+	setComponentDefinition {
+		TYPE: "tSortRow",
+		NAME: "tSortRow_1",
+		POSITION: 672, 192
+	}
+	setSettings {
+		CRITERIA {
+			COLNAME : "sum",
+			SORT : "num",
+			ORDER : "desc"
+		},
+		LABEL : "sort"
+	}
+	addSchema {
+		NAME: "tSortRow_1",
+		CONNECTOR: "FLOW"
+		addColumn {
+			NAME: "subject",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "sum",
+			TYPE: "id_Double",
+			PRECISION: 2
+		}
+		addColumn {
+			NAME: "average",
+			TYPE: "id_Double",
+			PRECISION: 2
+		}
+		addColumn {
+			NAME: "max",
+			TYPE: "id_Double",
+			PRECISION: 2
+		}
+		addColumn {
+			NAME: "min",
+			TYPE: "id_Double",
+			PRECISION: 2
+		}
+	}
+}
+
+// Displaying the aggregation and sorting result
+
+addComponent {
+	setComponentDefinition {
+		TYPE: "tLogRow",
+		NAME: "tLogRow_1",
+		POSITION: 800, 192
+	}
+	setSettings {
+		BASIC_MODE : "false",
+		TABLE_PRINT : "true",
+		LABEL : "result"		
+	}
+	addSchema {
+		NAME: "tLogRow_1",
+		CONNECTOR: "FLOW"
+		addColumn {
+			NAME: "subject",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "sum",
+			TYPE: "id_Double",
+			PRECISION: 2
+		}
+		addColumn {
+			NAME: "average",
+			TYPE: "id_Double",
+			PRECISION: 2
+		}
+		addColumn {
+			NAME: "max",
+			TYPE: "id_Double",
+			PRECISION: 2
+		}
+		addColumn {
+			NAME: "min",
+			TYPE: "id_Double",
+			PRECISION: 2
+		}
+	}
+}
+
+// Connecting the components
+
+addConnection {
+	TYPE: "FLOW",
+	NAME: "row1",
+	LINESTYLE: 10,	// Merge (for tUnite)
+	SOURCE: "tFileInputDelimited_1",
+	TARGET: "tUnite_1"
+}
+
+addConnection {
+	TYPE: "FLOW",
+	NAME: "row2",
+	LINESTYLE: 10,	// Merge (for tUnite)
+	SOURCE: "tFileInputDelimited_2",
+	TARGET: "tUnite_1"
+}
+
+addConnection {
+	TYPE: "FLOW",
+	NAME: "row3",
+	LINESTYLE: 10,	// Merge (for tUnite)
+	SOURCE: "tFileInputDelimited_3",
+	TARGET: "tUnite_1"
+}
+
+addConnection {
+	TYPE: "FLOW",
+	NAME: "row4",
+	LINESTYLE: 0,
+	SOURCE: "tUnite_1",
+	TARGET: "tAggregateRow_1"
+}
+
+addConnection {
+	TYPE: "FLOW",
+	NAME: "row5",
+	LINESTYLE: 0,
+	SOURCE: "tAggregateRow_1",
+	TARGET: "tSortRow_1"
+}
+
+addConnection {
+	TYPE: "FLOW",
+	NAME: "row6",
+	LINESTYLE: 0,
+	SOURCE: "tSortRow_1",
+	TARGET: "tLogRow_1"
+}
+

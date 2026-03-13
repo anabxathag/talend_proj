@@ -1,0 +1,86 @@
+// read input data
+addComponent {
+	setComponentDefinition {
+		TYPE: "tFileInputDelimited",
+		NAME: "tFileInputDelimited_1",
+		POSITION: 160, 192
+	}	
+	setSettings {
+		FILENAME : "\"Applications/TalendStudio-8.0.1/studio/workspace/data/marriage.csv\"",
+		HEADER : "1",
+		FOOTER : "1",
+		LABEL : "source_data"
+	}
+}
+
+// replicate input data
+addComponent {
+	setComponentDefinition {
+		TYPE: "tReplicate",
+		NAME: "tReplicate_1",
+		POSITION: 288, 192
+	}
+	setSettings { 
+		LABEL : "replicate_flows"
+	}
+	addSchema {
+		NAME: "tReplicate_1",
+		CONNECTOR: "FLOW"
+		addColumn {
+			NAME: "name",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "gender",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "age",
+			TYPE: "id_Integer",
+			LENGTH: 2
+		}
+		addColumn {
+			NAME: "city",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "marriageStatus",
+			TYPE: "id_String"
+		}
+	}
+}
+
+// filter data columns - remove 'marriageStatus'
+addComponent {
+	setComponentDefinition {
+		TYPE: "tFilterColumns",
+		NAME: "tFilterColumns_1",
+		POSITION: 512, 224
+	}
+	setSettings {
+		LABEL : "filter_columns"
+	}
+	addSchema {
+		NAME: "tFilterColumns_1",
+		CONNECTOR: "FLOW"
+		addColumn {
+			NAME: "name",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "gender",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "age",
+			TYPE: "id_Integer",
+			LENGTH: 2
+		}
+		addColumn {
+			NAME: "city",
+			TYPE: "id_String"
+		}
+	}
+}
+
+// filter records - accept men between 10 and 80 whose names are shorter than 9 characters

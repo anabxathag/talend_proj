@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model:JobletProcess xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:model="http://www.talend.com/joblet.ecore">
+  <parameters/>
+  <node componentName="tFileInputDelimited" posX="160" posY="192">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tFileInputDelimited_1"/>
+    <elementParameter name="FILENAME" value="&quot;Applications/TalendStudio-8.0.1/studio/workspace/data/marriage.csv&quot;"/>
+    <elementParameter name="HEADER" value="1"/>
+    <elementParameter name="FOOTER" value="1"/>
+    <elementParameter name="LABEL" value="source_data"/>
+  </node>
+  <node componentName="tReplicate" posX="288" posY="192">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tReplicate_1"/>
+    <elementParameter name="LABEL" value="replicate_flows"/>
+    <metadata connector="FLOW" name="tReplicate_1">
+      <column key="false" length="-1" name="name" nullable="false" precision="-1" type="id_String"/>
+      <column key="false" length="-1" name="gender" nullable="false" precision="-1" type="id_String"/>
+      <column key="false" length="2" name="age" nullable="false" precision="-1" type="id_Integer"/>
+      <column key="false" length="-1" name="city" nullable="false" precision="-1" type="id_String"/>
+      <column key="false" length="-1" name="marriageStatus" nullable="false" precision="-1" type="id_String"/>
+    </metadata>
+  </node>
+  <node componentName="tFilterColumns" posX="512" posY="224">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tFilterColumns_1"/>
+    <elementParameter name="LABEL" value="filter_columns"/>
+    <metadata connector="FLOW" name="tFilterColumns_1">
+      <column key="false" length="-1" name="name" nullable="false" precision="-1" type="id_String"/>
+      <column key="false" length="-1" name="gender" nullable="false" precision="-1" type="id_String"/>
+      <column key="false" length="2" name="age" nullable="false" precision="-1" type="id_Integer"/>
+      <column key="false" length="-1" name="city" nullable="false" precision="-1" type="id_String"/>
+    </metadata>
+  </node>
+</model:JobletProcess>

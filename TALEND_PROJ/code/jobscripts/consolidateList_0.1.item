@@ -1,0 +1,211 @@
+addComponent {
+	setComponentDefinition {
+		TYPE: "tFileInputDelimited",
+		NAME: "tFileInputDelimited_1",
+		POSITION: 192, 256
+	}
+	setSettings {
+		FILENAME : "\"/Applications/TalendStudio-8.0.1/studio/workspace/data/list_people.csv\"",
+		HEADER : "1",
+		LABEL : "people"
+	}
+	addSchema {
+		NAME: "tFileInputDelimited_1",
+		CONNECTOR: "FLOW"
+		addColumn {
+			NAME: "id",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "name",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "age",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "city",
+			TYPE: "id_String"
+		}
+	}
+}
+
+addComponent {
+	setComponentDefinition {
+		TYPE: "tFileInputDelimited",
+		NAME: "tFileInputDelimited_2",
+		POSITION: 192, 128
+	}
+	setSettings {
+		FILENAME : "\"/Applications/TalendStudio-8.0.1/studio/workspace/data/list_families.csv\"",
+		HEADER : "1",
+		LABEL : "families"
+	}
+	addSchema {
+		NAME: "tFileInputDelimited_2",
+		CONNECTOR: "FLOW"
+		addColumn {
+			NAME: "id",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "family",
+			TYPE: "id_String"
+		}
+	}
+}
+
+addComponent {
+	setComponentDefinition {
+		TYPE: "tMap",
+		NAME: "tMap_1",
+		POSITION: 480, 256
+	}
+	setSettings {
+		ENABLE_AUTO_CONVERT_TYPE : "true"
+	}
+	addSchema {
+		NAME: "out",
+		CONNECTOR: "FLOW",
+		LABEL: "out"
+		addColumn {
+			NAME: "id",
+			TYPE: "id_Integer",
+			LENGTH: 2
+		}
+		addColumn {
+			NAME: "full_name",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "age",
+			TYPE: "id_Integer",
+			LENGTH: 2
+		}
+		addColumn {
+			NAME: "city",
+			TYPE: "id_String"
+		}
+	}
+	addMapperData {
+		addInputTable {
+			NAME: "row1"
+			addColumn {
+				NAME: "id",
+				TYPE: "id_String"
+			}
+			addColumn {
+				NAME: "name",
+				TYPE: "id_String"
+			}
+			addColumn {
+				NAME: "age",
+				TYPE: "id_String"
+			}
+			addColumn {
+				NAME: "city",
+				TYPE: "id_String"
+			}
+		}
+		addInputTable {
+			NAME: "row2"
+			addColumn {
+				NAME: "id",
+				TYPE: "id_String",
+				EXPRESSION: "row1.id"
+			}
+			addColumn {
+				NAME: "family",
+				TYPE: "id_String"
+			}
+		}
+		addOutputTable {
+			ID: "",
+			NAME: "out"
+			addColumn {
+				NAME: "id",
+				TYPE: "id_Integer",
+				EXPRESSION: "row1.id"
+			}
+			addColumn {
+				NAME: "full_name",
+				TYPE: "id_String",
+				EXPRESSION: "row1.name  + \" \" + row2.family"
+			}
+			addColumn {
+				NAME: "age",
+				TYPE: "id_Integer",
+				EXPRESSION: "row1.age"
+			}
+			addColumn {
+				NAME: "city",
+				TYPE: "id_String",
+				EXPRESSION: "row1.city "
+			}
+		}
+	}
+}
+
+addComponent {
+	setComponentDefinition {
+		TYPE: "tFileOutputDelimited",
+		NAME: "tFileOutputDelimited_1",
+		POSITION: 736, 256
+	}
+	setSettings {
+		FILENAME : "\"/Applications/TalendStudio-8.0.1/studio/workspace/data/consolidated_list.csv\"",
+		INCLUDEHEADER : "true",
+		ENCODING : "\"UTF-8\"",
+		ENCODING:ENCODING_TYPE : "UTF-8",
+		FILE_EXIST_EXCEPTION : "false",
+		LABEL : "consolidated_list"
+	}
+	addSchema {
+		NAME: "tFileOutputDelimited_1",
+		CONNECTOR: "FLOW",
+		LABEL: "out"
+		addColumn {
+			NAME: "id",
+			TYPE: "id_Integer",
+			LENGTH: 2
+		}
+		addColumn {
+			NAME: "full_name",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "age",
+			TYPE: "id_Integer",
+			LENGTH: 2
+		}
+		addColumn {
+			NAME: "city",
+			TYPE: "id_String"
+		}
+	}
+}
+
+addConnection {
+	TYPE: "FLOW",
+	NAME: "row1",
+	LINESTYLE: 0,
+	SOURCE: "tFileInputDelimited_1",
+	TARGET: "tMap_1"
+}
+
+addConnection {
+	TYPE: "FLOW",
+	NAME: "row2",
+	LINESTYLE: 8,
+	SOURCE: "tFileInputDelimited_2",
+	TARGET: "tMap_1"
+}
+
+addConnection {
+	TYPE: "FLOW",
+	NAME: "out",
+	LINESTYLE: 0,
+	SOURCE: "tMap_1",
+	TARGET: "tFileOutputDelimited_1"
+}

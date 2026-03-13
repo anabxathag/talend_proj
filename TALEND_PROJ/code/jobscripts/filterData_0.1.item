@@ -1,0 +1,392 @@
+// read input data
+addComponent {
+	setComponentDefinition {
+		TYPE: "tFileInputDelimited",
+		NAME: "tFileInputDelimited_1",
+		POSITION: 160, 192
+	}	
+	setSettings {
+		FILENAME : "\"/Applications/TalendStudio-8.0.1/studio/workspace/data/marriage.csv\"",
+		HEADER : "1",
+		FOOTER : "1",
+		LABEL : "source_data"
+	}
+	addSchema {
+		NAME: "tFileInputDelimited_1",
+		CONNECTOR: "FLOW"
+		addColumn {
+			NAME: "name",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "gender",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "age",
+			TYPE: "id_Integer",
+			LENGTH: 2
+		}
+		addColumn {
+			NAME: "city",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "marriageStatus",
+			TYPE: "id_String"
+		}
+	}
+}
+
+// replicate input data
+addComponent {
+	setComponentDefinition {
+		TYPE: "tReplicate",
+		NAME: "tReplicate_1",
+		POSITION: 288, 192
+	}
+	setSettings { 
+		LABEL : "replicate_flows"
+	}
+	addSchema {
+		NAME: "tReplicate_1",
+		CONNECTOR: "FLOW"
+		addColumn {
+			NAME: "name",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "gender",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "age",
+			TYPE: "id_Integer",
+			LENGTH: 2
+		}
+		addColumn {
+			NAME: "city",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "marriageStatus",
+			TYPE: "id_String"
+		}
+	}
+}
+
+// filter data columns - remove 'marriageStatus'
+addComponent {
+	setComponentDefinition {
+		TYPE: "tFilterColumns",
+		NAME: "tFilterColumns_1",
+		POSITION: 512, 224
+	}
+	setSettings {
+		LABEL : "filter_columns"
+	}
+	addSchema {
+		NAME: "tFilterColumns_1",
+		CONNECTOR: "FLOW"
+		addColumn {
+			NAME: "name",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "gender",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "age",
+			TYPE: "id_Integer",
+			LENGTH: 2
+		}
+		addColumn {
+			NAME: "city",
+			TYPE: "id_String"
+		}
+	}
+}
+
+// filter records - accept men between 10 and 80 whose names are shorter than 9 characters
+addComponent {
+	setComponentDefinition {
+		TYPE: "tFilterRow",
+		NAME: "tFilterRow_1",
+		POSITION: 640, 224
+	}
+	setSettings {
+		LOGICAL_OP : "&&",
+		CONDITIONS {
+			INPUT_COLUMN : "name",
+			FUNCTION : "$source == null? false : $source.length() $operator $target",
+			OPERATOR : "<",
+			RVALUE : "9",
+			INPUT_COLUMN : "gender",
+			FUNCTION : "",
+			OPERATOR : "==",
+			RVALUE : "\"M\"",
+			INPUT_COLUMN : "age",
+			FUNCTION : "",
+			OPERATOR : ">",
+			RVALUE : "10",
+			INPUT_COLUMN : "age",
+			FUNCTION : "",
+			OPERATOR : "<",
+			RVALUE : "80"
+		},
+		LABEL : "filter_records"
+	}
+	
+	// define the schema for the accepted records
+	addSchema {
+		NAME: "ACCEPT",
+		CONNECTOR: "FILTER"
+		addColumn {
+			NAME: "name",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "gender",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "age",
+			TYPE: "id_Integer",
+			LENGTH: 2
+		}
+		addColumn {
+			NAME: "city",
+			TYPE: "id_String"
+		}
+	}
+	
+	// define the schema for the rejected records
+	addSchema {
+		NAME: "REJECT",
+		CONNECTOR: "REJECT"
+		addColumn {
+			NAME: "name",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "gender",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "age",
+			TYPE: "id_Integer",
+			LENGTH: 2
+		}
+		addColumn {
+			NAME: "city",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "errorMessage",
+			TYPE: "id_String",
+			NULLABLE: true,
+			LENGTH: 255,
+			PRECISION: 0
+		}
+	}
+}
+
+// print unprocessed records
+addComponent {
+	setComponentDefinition {
+		TYPE: "tLogRow",
+		NAME: "tLogRow_1",
+		POSITION: 512, 160
+	}
+	setSettings {
+		BASIC_MODE : "false",
+		TABLE_PRINT : "true",
+		VERTICAL : "false",
+		PRINT_UNIQUE : "true",
+		LABEL : "unprocessed_records"
+	}
+	addSchema {
+		NAME: "tLogRow_1",
+		CONNECTOR: "FLOW"
+		addColumn {
+			NAME: "name",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "gender",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "age",
+			TYPE: "id_Integer",
+			LENGTH: 2
+		}
+		addColumn {
+			NAME: "city",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "marriageStatus",
+			TYPE: "id_String"
+		}
+	}
+}
+
+// print accepted records
+addComponent {
+	setComponentDefinition {
+		TYPE: "tLogRow",
+		NAME: "tLogRow_2",
+		POSITION: 832, 224
+	}
+	setSettings {
+		BASIC_MODE : "false",
+		TABLE_PRINT : "true",
+		VERTICAL : "false",
+		PRINT_UNIQUE : "true",
+		LABEL : "accepted_records"
+	}
+	addSchema {
+		NAME: "tLogRow_2",
+		CONNECTOR: "FLOW"
+		addColumn {
+			NAME: "name",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "gender",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "age",
+			TYPE: "id_Integer",
+			LENGTH: 2
+		}
+		addColumn {
+			NAME: "city",
+			TYPE: "id_String"
+		}
+	}
+}
+
+// print rejected records
+addComponent {
+	setComponentDefinition {
+		TYPE: "tLogRow",
+		NAME: "tLogRow_3",
+		POSITION: 832, 288
+	}
+	setSettings {
+		BASIC_MODE : "false",
+		TABLE_PRINT : "true",
+		VERTICAL : "false",
+		PRINT_UNIQUE : "true",
+		LABEL : "rejected_records"
+	}
+	addSchema {
+		NAME: "tLogRow_3",
+		CONNECTOR: "FLOW"
+		addColumn {
+			NAME: "name",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "gender",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "age",
+			TYPE: "id_Integer",
+			LENGTH: 2
+		}
+		addColumn {
+			NAME: "city",
+			TYPE: "id_String"
+		}
+		addColumn {
+			NAME: "errorMessage",
+			TYPE: "id_String",
+			NULLABLE: true,
+			LENGTH: 255,
+			PRECISION: 0
+		}
+	}
+}
+
+// print summary
+addComponent {
+	setComponentDefinition {
+		TYPE: "tJava",
+		NAME: "tJava_1",
+		POSITION: 160, 416
+	}
+	setSettings {
+		CODE : "System.out.println(\"\\n\" +
+\"Total number of records    : \"+globalMap.get(\"tLogRow_1_NB_LINE\") + \"\\n\" +
+\"Number of records accepted : \"+globalMap.get(\"tLogRow_2_NB_LINE\") + \"\\n\" +
+\"Number of records rejected : \"+globalMap.get(\"tLogRow_3_NB_LINE\") + \"\\n\" + \"\\n\" );",
+		LABEL : "print_summary"
+	}
+	addSchema {
+		NAME: "tJava_1",
+		CONNECTOR: "FLOW"
+	}
+}
+
+// flow: source_data -> replicate_flows
+addConnection {
+	TYPE: "FLOW",
+	NAME: "row1",
+	SOURCE: "tFileInputDelimited_1",
+	TARGET: "tReplicate_1"
+}
+
+// flow: replicate_flows -> unprocessed_records
+addConnection {
+	TYPE: "FLOW",
+	NAME: "row2",
+	SOURCE: "tReplicate_1",
+	TARGET: "tLogRow_1"
+}
+
+// flow: replicate_flows -> filter_columns
+addConnection {
+	TYPE: "FLOW",
+	NAME: "row3",
+	SOURCE: "tReplicate_1",
+	TARGET: "tFilterColumns_1"
+}
+
+// flow: filter_columns -> filter_records
+addConnection {
+	TYPE: "FLOW",
+	NAME: "row4",
+	SOURCE: "tFilterColumns_1",
+	TARGET: "tFilterRow_1"
+}
+
+// accepted records
+addConnection {
+	TYPE: "FILTER",
+	NAME: "row5",
+	SOURCE: "tFilterRow_1",
+	TARGET: "tLogRow_2"
+}
+
+// rejected records
+addConnection {
+	TYPE: "REJECT",
+	NAME: "row6",
+	SOURCE: "tFilterRow_1",
+	TARGET: "tLogRow_3"
+}
+
+// trigger summary after job completes
+addConnection {
+	TYPE: "SUBJOB_OK",
+	NAME: "trigger1",
+	LINESTYLE: 1,
+	SOURCE: "tFileInputDelimited_1",
+	TARGET: "tJava_1"
+}

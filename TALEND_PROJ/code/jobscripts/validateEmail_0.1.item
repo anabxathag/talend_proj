@@ -1,0 +1,137 @@
+// Defining the input component to read the email addresses
+addComponent {
+	setComponentDefinition {
+		TYPE: "tFileInputDelimited",
+		NAME: "tFileInputDelimited_1",
+		POSITION: 256, 192
+	}
+	setSettings {
+		FILENAME : "\"/Applications/TalendStudio-8.0.1/studio/workspace/data/emails.txt\"",
+		LABEL : "Email addresses"
+	}
+	addSchema {
+		NAME: "tFileInputDelimited_1",
+		CONNECTOR: "FLOW"
+		addColumn {
+			NAME: "email",
+			TYPE: "id_String"
+		}
+	}
+}
+
+// Deduplicating the email addresses
+addComponent {
+	setComponentDefinition {
+		TYPE: "tUniqRow",
+		NAME: "tUniqRow_1",
+		POSITION: 416, 192
+	}
+	setSettings {
+		UNIQUE_KEY {
+			SCHEMA_COLUMN : "email",
+			KEY_ATTRIBUTE : "true"
+		},
+		LABEL : "deduplicate"
+	}
+	addSchema {
+		NAME: "UNIQUE",
+		CONNECTOR: "UNIQUE"
+		addColumn {
+			NAME: "email",
+			TYPE: "id_String"
+		}
+	}
+	addSchema {
+		NAME: "DUPLICATE",
+		CONNECTOR: "DUPLICATE"
+		addColumn {
+			NAME: "email",
+			TYPE: "id_String"
+		}
+	}
+}
+
+// Validating email addresses and showing duplicates
+addComponent {
+	setComponentDefinition {
+		TYPE: "tJavaRow",
+		NAME: "tJavaRow_1",
+		POSITION: 640, 96
+	}
+	setSettings {
+		CODE : "String email = input_row.email;
+
+Perl5Matcher matcher = new Perl5Matcher();
+Perl5Compiler compiler = new Perl5Compiler();
+Pattern pattern = compiler.compile(\"^[\\\\w_.-]+@[\\\\w_.-]+\\\\.[\\\\w]+$\");
+
+if (!matcher.matches(email, pattern)) {
+	System.out.println(\"invalid : \" + email);
+	}
+	else
+	System.out.println(\"valid   : \" + email);",
+		LABEL : "validate"
+	}
+}
+
+addComponent {
+	setComponentDefinition {
+		TYPE: "tJavaRow",
+		NAME: "tJavaRow_2",
+		POSITION: 640, 288
+	}
+	setSettings {
+		CODE : "System.out.println(\"duplicate: \" + input_row.email);",
+		LABEL : "duplicates"
+	}
+}
+
+// Loading Java library to validate email addresses
+addComponent {
+	setComponentDefinition {
+		TYPE: "tLibraryLoad",
+		NAME: "tLibraryLoad_1",
+		POSITION: 256, 64
+	}
+	setSettings {
+		LIBRARY : "\"jakarta-oro-2.0.8.jar\"",
+		IMPORT : "import org.apache.oro.text.regex.Perl5Matcher;
+import org.apache.oro.text.regex.Perl5Compiler;
+import org.apache.oro.text.regex.Pattern;"
+	}
+}
+
+// Defining connections
+addConnection {
+	TYPE: "SUBJOB_OK",
+	NAME: "OnSubjobOk",
+	LINESTYLE: 1,
+	METANAME: "tLibraryLoad_1",
+	SOURCE: "tLibraryLoad_1",
+	TARGET: "tFileInputDelimited_1",
+}
+
+addConnection {
+	TYPE: "FLOW",
+	NAME: "row1",
+	LINESTYLE: 0,
+	SOURCE: "tFileInputDelimited_1",
+	TARGET: "tUniqRow_1"
+}
+
+addConnection {
+	TYPE: "UNIQUE",
+	NAME: "row2",
+	LINESTYLE: 0,
+	SOURCE: "tUniqRow_1",
+	TARGET: "tJavaRow_1"
+}
+
+addConnection {
+	TYPE: "DUPLICATE",
+	NAME: "row3",
+	LINESTYLE: 0,
+	SOURCE: "tUniqRow_1",
+	TARGET: "tJavaRow_2"
+}
+

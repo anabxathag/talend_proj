@@ -9,4 +9,41 @@
 	<natures>
 		<nature>org.talend.core.talendnature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>temp/aggSortScores_0.1.jobscript</name>
+			<type>1</type>
+			<location>/Applications/TalendStudio-8.0.1/studio/workspace/talend_proj-754492016/TALEND_PROJ/code/jobscripts/aggSortScores_0.1.item</location>
+		</link>
+		<link>
+			<name>temp/childJob_0.1.jobscript</name>
+			<type>1</type>
+			<location>/Applications/TalendStudio-8.0.1/studio/workspace/talend_proj-754492016/TALEND_PROJ/code/jobscripts/childJob_0.1.item</location>
+		</link>
+		<link>
+			<name>temp/consolidateList_0.1.jobscript</name>
+			<type>1</type>
+			<location>/Applications/TalendStudio-8.0.1/studio/workspace/talend_proj-754492016/TALEND_PROJ/code/jobscripts/consolidateList_0.1.item</location>
+		</link>
+		<link>
+			<name>temp/filterData_0.1.jobscript</name>
+			<type>1</type>
+			<location>/Applications/TalendStudio-8.0.1/studio/workspace/talend_proj-754492016/TALEND_PROJ/code/jobscripts/filterData_0.1.item</location>
+		</link>
+		<link>
+			<name>temp/filterRecords_0.1.jobscript</name>
+			<type>1</type>
+			<location>/Applications/TalendStudio-8.0.1/studio/workspace/talend_proj-754492016/TALEND_PROJ/code/jobscripts/filterRecords_0.1.item</location>
+		</link>
+		<link>
+			<name>temp/filter_0.1.jobscript</name>
+			<type>1</type>
+			<location>/Applications/TalendStudio-8.0.1/studio/workspace/talend_proj-754492016/TALEND_PROJ/code/jobscripts/filter_0.1.item</location>
+		</link>
+		<link>
+			<name>temp/validateEmail_0.1.jobscript</name>
+			<type>1</type>
+			<location>/Applications/TalendStudio-8.0.1/studio/workspace/talend_proj-754492016/TALEND_PROJ/code/jobscripts/validateEmail_0.1.item</location>
+		</link>
+	</linkedResources>
 </projectDescription>

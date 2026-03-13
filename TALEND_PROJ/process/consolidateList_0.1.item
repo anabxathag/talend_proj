@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model:JobletProcess xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:TalendMapper="http://www.talend.org/mapper" xmlns:model="http://www.talend.com/joblet.ecore">
+  <parameters/>
+  <node componentName="tFileInputDelimited" posX="192" posY="256">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tFileInputDelimited_1"/>
+    <elementParameter name="FILENAME" value="&quot;/Applications/TalendStudio-8.0.1/studio/workspace/data/list_people.csv&quot;"/>
+    <elementParameter name="HEADER" value="1"/>
+    <elementParameter name="LABEL" value="people"/>
+    <metadata connector="FLOW" name="tFileInputDelimited_1">
+      <column key="false" length="-1" name="id" nullable="false" precision="-1" type="id_String"/>
+      <column key="false" length="-1" name="name" nullable="false" precision="-1" type="id_String"/>
+      <column key="false" length="-1" name="age" nullable="false" precision="-1" type="id_String"/>
+      <column key="false" length="-1" name="city" nullable="false" precision="-1" type="id_String"/>
+    </metadata>
+  </node>
+  <node componentName="tFileInputDelimited" posX="192" posY="128">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tFileInputDelimited_2"/>
+    <elementParameter name="FILENAME" value="&quot;/Applications/TalendStudio-8.0.1/studio/workspace/data/list_families.csv&quot;"/>
+    <elementParameter name="HEADER" value="1"/>
+    <elementParameter name="LABEL" value="families"/>
+    <metadata connector="FLOW" name="tFileInputDelimited_2">
+      <column key="false" length="-1" name="id" nullable="false" precision="-1" type="id_String"/>
+      <column key="false" length="-1" name="family" nullable="false" precision="-1" type="id_String"/>
+    </metadata>
+  </node>
+  <node componentName="tMap" posX="480" posY="256">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tMap_1"/>
+    <elementParameter name="ENABLE_AUTO_CONVERT_TYPE" value="true"/>
+    <metadata connector="FLOW" label="out" name="out">
+      <column key="false" length="2" name="id" nullable="false" precision="-1" type="id_Integer"/>
+      <column key="false" length="-1" name="full_name" nullable="false" precision="-1" type="id_String"/>
+      <column key="false" length="2" name="age" nullable="false" precision="-1" type="id_Integer"/>
+      <column key="false" length="-1" name="city" nullable="false" precision="-1" type="id_String"/>
+    </metadata>
+    <nodeData xsi:type="TalendMapper:MapperData">
+      <outputTables name="out" id="">
+        <mapperTableEntries name="id" expression="row1.id" type="id_Integer"/>
+        <mapperTableEntries name="full_name" expression="row1.name  + &quot; &quot; + row2.family" type="id_String"/>
+        <mapperTableEntries name="age" expression="row1.age" type="id_Integer"/>
+        <mapperTableEntries name="city" expression="row1.city " type="id_String"/>
+      </outputTables>
+      <inputTables name="row1">
+        <mapperTableEntries name="id" type="id_String"/>
+        <mapperTableEntries name="name" type="id_String"/>
+        <mapperTableEntries name="age" type="id_String"/>
+        <mapperTableEntries name="city" type="id_String"/>
+      </inputTables>
+      <inputTables name="row2">
+        <mapperTableEntries name="id" expression="row1.id" type="id_String"/>
+        <mapperTableEntries name="family" type="id_String"/>
+      </inputTables>
+    </nodeData>
+  </node>
+  <node componentName="tFileOutputDelimited" posX="736" posY="256">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tFileOutputDelimited_1"/>
+    <elementParameter name="FILENAME" value="&quot;/Applications/TalendStudio-8.0.1/studio/workspace/data/consolidated_list.csv&quot;"/>
+    <elementParameter name="INCLUDEHEADER" value="true"/>
+    <elementParameter name="ENCODING" value="&quot;UTF-8&quot;"/>
+    <elementParameter name="ENCODING:ENCODING_TYPE" value="UTF-8"/>
+    <elementParameter name="FILE_EXIST_EXCEPTION" value="false"/>
+    <elementParameter name="LABEL" value="consolidated_list"/>
+    <metadata connector="FLOW" label="out" name="tFileOutputDelimited_1">
+      <column key="false" length="2" name="id" nullable="false" precision="-1" type="id_Integer"/>
+      <column key="false" length="-1" name="full_name" nullable="false" precision="-1" type="id_String"/>
+      <column key="false" length="2" name="age" nullable="false" precision="-1" type="id_Integer"/>
+      <column key="false" length="-1" name="city" nullable="false" precision="-1" type="id_String"/>
+    </metadata>
+  </node>
+  <connection connectorName="FLOW" label="row1" lineStyle="0" mergeOrder="0" outputId="0" source="tFileInputDelimited_1" target="tMap_1"/>
+  <connection connectorName="FLOW" label="row2" lineStyle="8" mergeOrder="0" outputId="0" source="tFileInputDelimited_2" target="tMap_1"/>
+  <connection connectorName="FLOW" label="out" lineStyle="0" mergeOrder="0" outputId="0" source="tMap_1" target="tFileOutputDelimited_1"/>
+</model:JobletProcess>
